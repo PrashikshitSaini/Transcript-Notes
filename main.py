@@ -3,15 +3,33 @@ from tkinter import filedialog, scrolledtext, messagebox
 import speech_recognition as sr
 import requests
 
+try:
+    import pyaudio
+except ImportError:
+    messagebox.showerror("Error", "PyAudio is not installed. Please install it using 'pip install pyaudio'.")
+
+import google.generativeai as genai
+
+GEMINI_API_KEY = "API_KEYS"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash')
+
 def record_audio():
     recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        messagebox.showinfo("Recording", "Recording... Speak now!")
-        audio_data = recognizer.listen(source)
     try:
+        with sr.Microphone() as source:
+            messagebox.showinfo("Recording", "Recording... Speak now!")
+            print("Microphone initialized. Listening...")
+            audio_data = recognizer.listen(source, timeout=10)
+            print("Audio data captured.")
         transcript = recognizer.recognize_google(audio_data)
+        print("Transcription completed.")
         notes = generate_notes_with_gemini(transcript)
         display_notes(notes)
+    except AttributeError as e:
+        messagebox.showerror("Error", "PyAudio is not installed. Please install it using 'pip install pyaudio'.")
+    except sr.WaitTimeoutError:
+        messagebox.showerror("Error", "Listening timed out while waiting for phrase to start.")
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
@@ -30,8 +48,8 @@ def select_audio_file():
         messagebox.showerror("Error", str(e))
 
 def generate_notes_with_gemini(transcript):
-    # Simulate API call to Gemini and return organized notes.
-    return "Simulated notes from Gemini API based on transcript."
+    response = model.generate_content(transcript)
+    return response.text
 
 def display_notes(notes):
     text_area.config(state=tk.NORMAL)
