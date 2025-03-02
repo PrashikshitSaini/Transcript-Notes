@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
 
-// Use the free Web Speech API for transcription
+// Use the free Web Speech API for transcription or server-side Vosk for uploaded files
 export const transcribeAudio = async (audioFile) => {
   if (!audioFile || !(audioFile instanceof File)) {
     throw new Error("A valid audio file is required");
@@ -16,94 +16,51 @@ export const transcribeAudio = async (audioFile) => {
     );
   }
 
-  // For audio file upload, we can try browser-based transcription with Web Speech API
-  return new Promise((resolve, reject) => {
-    // Check if browser supports speech recognition
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+  try {
+    // For uploaded audio files, send to server for processing with Vosk
+    const formData = new FormData();
+    formData.append("audio", audioFile);
 
-    if (!SpeechRecognition) {
-      reject(
-        new Error(
-          "Speech recognition not supported in this browser. Try Chrome or Edge."
-        )
-      );
-      return;
-    }
+    console.log("Sending audio file to server for Vosk transcription...");
 
-    // Create audio element to play the file
-    const audio = new Audio();
-    const fileURL = URL.createObjectURL(audioFile);
-    audio.src = fileURL;
-
-    // Initialize speech recognition
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-
-    let transcript = "";
-
-    recognition.onresult = (event) => {
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          transcript += event.results[i][0].transcript + " ";
-        }
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error", event.error);
-      // Don't reject - we still want to return whatever we've captured
-    };
-
-    recognition.onend = () => {
-      if (transcript.trim()) {
-        resolve(transcript);
-      } else {
-        resolve(`This is an uploaded audio file. Web Speech API has limitations with pre-recorded audio. 
-                For the best results, please use the microphone recording feature directly.
-                
-                Sample transcript for demonstration: 
-                "Today we discussed the implementation of speech recognition technologies 
-                and their integration with note-taking applications. The key challenges 
-                include browser compatibility and the need for server-side processing for 
-                more advanced features."`);
-      }
-    };
-
-    // Start audio and recognition
-    audio.onplay = () => {
-      recognition.start();
-    };
-
-    audio.onended = () => {
-      recognition.stop();
-    };
-
-    // Handle errors
-    audio.onerror = (e) => {
-      console.error("Audio error", e);
-      reject(new Error("Error playing audio file"));
-    };
-
-    // Play the audio file
-    audio.play().catch((err) => {
-      console.error("Error playing audio", err);
-      reject(
-        new Error(
-          "Browser prevented audio playback. Try a different browser or use the microphone directly."
-        )
-      );
+    // Server-side transcription with Vosk
+    const response = await axios.post(`${API_URL}/upload-audio`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      // Increase timeout for larger files
+      timeout: 120000, // 2 minutes timeout for large files
     });
 
-    // Safety timeout - stop after max duration
-    setTimeout(() => {
-      if (recognition) {
-        recognition.stop();
-      }
-    }, 300000); // 5 min max
-  });
+    // If server responds with a transcript
+    if (response.data && response.data.transcript) {
+      console.log("Transcription received from server");
+      return response.data.transcript;
+    }
+
+    throw new Error("No transcript returned from server");
+  } catch (error) {
+    console.error("Error transcribing audio:", error);
+
+    // Return a more helpful error message
+    if (error.code === "ECONNABORTED") {
+      throw new Error(
+        "Transcription timed out. The file may be too large or the server is busy."
+      );
+    } else if (error.response) {
+      throw new Error(
+        `Server error: ${
+          error.response.data.error || error.response.statusText
+        }`
+      );
+    } else if (error.request) {
+      throw new Error(
+        "Server not responding. Make sure the server is running."
+      );
+    } else {
+      throw new Error(`Transcription error: ${error.message}`);
+    }
+  }
 };
 
 // This function is called by the RecordingControls component when live recording happens

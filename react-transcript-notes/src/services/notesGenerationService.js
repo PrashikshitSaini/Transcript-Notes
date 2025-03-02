@@ -40,7 +40,7 @@ export const generateNotes = async (transcript) => {
             {
               parts: [
                 {
-                  text: `Generate comprehensive, well-organized notes from this transcript.
+                  text: `Generate comprehensive, well-organized notes from this transcript. Make sure not to alter too much of what the speaker is saying and keeping the results in the speakers content range.
                   Format the response in proper Markdown syntax with:
                   - Headers and subheaders (# and ##) for main topics and subtopics
                   - Bullet points (- or *) for lists

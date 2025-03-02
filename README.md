@@ -4,13 +4,13 @@ A web application for recording audio, transcribing speech, and generating compr
 
 ## Overview
 
-This application combines browser-based speech recognition with Google's Gemini AI to create a powerful note-taking tool. Record audio through your microphone or upload audio files, and the app will transcribe the content and generate well-organized Markdown notes.
+This 100% JavaScript application combines speech recognition with Google's Gemini AI to create a powerful note-taking tool. It uses browser-based APIs for live recording and server-side JavaScript for processing uploaded files.
 
 ## Features
 
 - **Voice Recording**: Record audio directly from your microphone
 - **Real-time Transcription**: See text as you speak with the Web Speech API
-- **File Upload Support**: Upload existing audio files for transcription
+- **File Upload Support**: Upload existing audio files for server-side transcription
 - **AI-Powered Notes**: Generate comprehensive notes from transcripts using Gemini AI
 - **Markdown Formatting**: Notes are formatted in Markdown for clean, structured presentation
 - **Recording Controls**: Pause, resume, and stop recording as needed
@@ -20,7 +20,9 @@ This application combines browser-based speech recognition with Google's Gemini 
 
 - **Frontend**: React 16 with custom components
 - **Backend**: Node.js with Express
-- **Transcription**: Web Speech API (browser-based, free)
+- **Live Transcription**: Web Speech API (browser-based, free)
+- **File Transcription**: DeepSpeech (Mozilla's open-source STT engine)
+- **Audio Processing**: wavefile for JavaScript-based audio manipulation
 - **AI Notes Generation**: Google Gemini API
 - **Markdown Rendering**: React Markdown
 
@@ -34,7 +36,7 @@ This application combines browser-based speech recognition with Google's Gemini 
 
 ### Installation
 
-1. **Clone the repository or download the files**
+1. **Clone the repository**
 
 2. **Install server dependencies**
 
@@ -42,14 +44,20 @@ This application combines browser-based speech recognition with Google's Gemini 
    npm install
    ```
 
-3. **Install React dependencies**
+3. **Download DeepSpeech models**
+
+   ```bash
+   npm run download-models
+   ```
+
+4. **Install React dependencies**
 
    ```bash
    cd react-transcript-notes
    npm install --legacy-peer-deps
    ```
 
-4. **Configure API keys**
+5. **Configure API keys**
    - Create a `.env` file in the root directory:
      ```
      API_KEY=your_gemini_api_key
@@ -86,17 +94,17 @@ This application combines browser-based speech recognition with Google's Gemini 
 5. **View Notes**: Generated notes will appear in Markdown format below
 6. **View Raw Markdown**: Expand the details section to see raw Markdown code
 
+## Advantages of This Approach
+
+- **Pure JavaScript**: No Python or other language dependencies
+- **Browser-Based Live Transcription**: Real-time speech-to-text in the browser
+- **Server-Side Processing**: Handle uploaded files with Node.js
+- **Open-Source Speech Recognition**: DeepSpeech for offline transcription
+- **Markdown Formatting**: Clean, structured notes with proper formatting
+
 ## Troubleshooting
 
+- **DeepSpeech Model Issues**: Run `npm run download-models` to download the required files
 - **Microphone Access**: Ensure your browser has permission to access your microphone
-- **Audio Not Transcribing**: Try Chrome or Edge browsers for best transcription results
 - **Note Generation Fails**: Verify your Gemini API key is correctly set
-- **React-Mic Errors**: Ensure you've installed with --legacy-peer-deps flag
 - **Server Connection Errors**: Confirm the server is running on port 5000
-
-## Limitations
-
-- Web Speech API works best with clear speech and good microphone quality
-- Transcription of uploaded files is limited by browser capabilities
-- Long recordings (>30min) may experience browser limitations
-- Transcription quality varies by browser and language

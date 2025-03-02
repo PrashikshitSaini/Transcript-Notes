@@ -119,7 +119,10 @@ const RecordingControls = ({
       try {
         setIsProcessing(true);
 
-        // Transcribe audio file
+        // Show processing message to user
+        onNotesGenerated("Processing your audio file... Please wait.");
+
+        // Transcribe audio file silently in background
         const transcript = await transcribeAudio(file);
 
         // Generate notes from transcript
