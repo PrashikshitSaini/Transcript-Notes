@@ -3,16 +3,37 @@ from tkinter import filedialog, scrolledtext, messagebox
 import speech_recognition as sr
 import requests
 import threading
-import time  # for timing
+import time
+import os
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    messagebox.showerror("Error", "python-dotenv is not installed. Please install it using 'pip install python-dotenv'.")
+    
 try:
     import pyaudio
 except ImportError:
     messagebox.showerror("Error", "PyAudio is not installed. Please install it using 'pip install pyaudio'.")
 
-import google.generativeai as genai
+try:
+    from pydub import AudioSegment
+except ImportError:
+    messagebox.showerror("Error", "Pydub is not installed. Please install it using 'pip install pydub'.")
 
-GEMINI_API_KEY = "API_KEys"
+try:
+    import google.generativeai as genai
+except ImportError:
+    messagebox.showerror("Error", "Google Generative AI is not installed. Please install it using 'pip install google-generativeai'.")
+
+# Load environment variables from .env file
+GEMINI_API_KEY = os.getenv("REACT_APP_GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    messagebox.showerror("Error", "API_KEY is not set in the .env file.")
+    exit(1)
+
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.0-flash')
 
@@ -112,11 +133,16 @@ def stop_recording():
     timer_label.config(text="Recording stopped.")
 
 def select_audio_file():
-    file_path = filedialog.askopenfilename(title="Select Audio File", filetypes=[("Audio Files", "*.wav *.mp3")])
+    file_path = filedialog.askopenfilename(title="Select Audio File", filetypes=[("Audio Files", "*.wav *.mp3 *.m4a")])
     if not file_path:
         return
     recognizer = sr.Recognizer()
     try:
+        if file_path.endswith(".m4a"):
+            audio = AudioSegment.from_file(file_path, format="m4a")
+            file_path_wav = file_path.replace(".m4a", ".wav")
+            audio.export(file_path_wav, format="wav")
+            file_path = file_path_wav
         with sr.AudioFile(file_path) as source:
             audio_data = recognizer.record(source)
         transcript = recognizer.recognize_google(audio_data)
