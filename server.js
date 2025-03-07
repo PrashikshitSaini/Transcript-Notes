@@ -148,6 +148,49 @@ app.post("/api/generate-notes", async (req, res) => {
       return res.status(400).json({ error: "No transcript provided" });
     }
 
+    // NEW: Use DeepSeek if configured
+    if (process.env.USE_DEEPSEEK === "true") {
+      const { spawn } = require("child_process");
+      const path = require("path");
+      const pyScript = path.join(__dirname, "deepseek_notes.py");
+
+      // FIX: Properly pass environment variables to the Python process
+      console.log("Spawning DeepSeek Python process with API key...");
+      const pyProcess = spawn("python", [pyScript, transcript], {
+        env: {
+          ...process.env,
+          // Explicitly pass the DeepSeek API key to the child process
+          REACT_APP_DEEPSEEK_API_KEY: process.env.REACT_APP_DEEPSEEK_API_KEY,
+        },
+      });
+
+      let notes = "";
+      let errorOutput = "";
+
+      pyProcess.stdout.on("data", (data) => {
+        notes += data.toString();
+      });
+
+      pyProcess.stderr.on("data", (data) => {
+        errorOutput += data.toString();
+        // Log error output for debugging
+        console.error(`Python error output: ${data.toString()}`);
+      });
+
+      return pyProcess.on("close", (code) => {
+        if (code === 0) {
+          console.log("DeepSeek notes generation completed successfully");
+          return res.json({ notes });
+        } else {
+          console.error(`DeepSeek process failed with code ${code}`);
+          return res.status(500).json({
+            error: "DeepSeek notes generation failed",
+            message: errorOutput || "Unknown Python process error",
+          });
+        }
+      });
+    }
+
     const GEMINI_API_KEY = process.env.API_KEY;
 
     if (!GEMINI_API_KEY) {
