@@ -2,6 +2,29 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
 
+// Enhanced prompt for more visually engaging notes
+const enhancedPrompt = `Create visually engaging, well-structured notes from this transcript.
+
+Use varied Markdown formatting:
+- Create a prominent main title with # and subtitles with ## and ###
+- Use *italic* for emphasis and definitions
+- Highlight key terms with **bold**
+- Create bullet lists with - for main points
+- Use numbered lists (1., 2.) for sequential information or steps
+- Create > blockquotes for important quotes or statements
+- Use dividers (---) to separate major sections
+- Include code blocks with \`\`\` for technical content if relevant
+- Use tables for comparing information when appropriate
+
+Be sure to:
+- Vary the formatting throughout (don't just use bullets for everything)
+- Create a logical structure with clear sections
+- Highlight 3-5 key concepts with bold text
+- Use blockquotes for direct quotes from the transcript
+- Keep the notes concise but comprehensive
+
+Here's the transcript: `;
+
 export const generateNotes = async (transcript) => {
   if (!transcript) {
     return "No transcript provided. Please record or upload audio first.";
@@ -21,25 +44,23 @@ export const generateNotes = async (transcript) => {
       "Server error, falling back to direct API call:",
       serverError
     );
-
     // Check if DeepSeek API key is provided
     const deepseekApiKey = process.env.REACT_APP_DEEPSEEK_API_KEY;
     if (deepseekApiKey) {
       try {
-        // Fix: Use the correct DeepSeek API endpoint format that's OpenAI-compatible
         const deepseekResponse = await axios.post(
           "https://api.deepseek.com/v1/chat/completions",
           {
             model: "deepseek-chat",
             messages: [
-              { role: "system", content: "You are a helpful assistant." },
+              {
+                role: "system",
+                content:
+                  "You are a skilled note taker who creates visually engaging and well-formatted markdown notes without adding any extra content.",
+              },
               {
                 role: "user",
-                content: `Generate comprehensive, well-organized on point notes with no excessive inputs from your but only from this transcript without altering the speaker's content:
-            
-Transcript: ${transcript}
-
-Format the response in proper Markdown syntax with headers, subheaders, bullet lists, **bold**, *italics*, and > blockquotes.`,
+                content: enhancedPrompt + transcript,
               },
             ],
           },
@@ -51,7 +72,6 @@ Format the response in proper Markdown syntax with headers, subheaders, bullet l
           }
         );
 
-        // Fix: Extract content from the proper location in the response
         if (deepseekResponse.data?.choices?.[0]?.message?.content) {
           return deepseekResponse.data.choices[0].message.content;
         }
@@ -66,7 +86,7 @@ Format the response in proper Markdown syntax with headers, subheaders, bullet l
         );
       }
     } else {
-      // Fallback to Gemini direct API call if DeepSeek key is not set
+      // Fallback to Gemini with enhanced prompt
       try {
         const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
         if (!apiKey) {
@@ -79,10 +99,7 @@ Format the response in proper Markdown syntax with headers, subheaders, bullet l
               {
                 parts: [
                   {
-                    text: `Generate comprehensive, well-organized notes from this transcript without changing much of the speaker's content.
-Format the response in Markdown with headers, bullet lists, **bold**, *italics*, and > blockquotes.
-
-Transcript: ${transcript}`,
+                    text: enhancedPrompt + transcript,
                   },
                 ],
               },

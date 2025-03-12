@@ -1,60 +1,172 @@
+/* Root variables for consistent theming */
+:root {
+  --primary-dark: #121212;
+  --secondary-dark: #1e1e1e;
+  --accent-color: #6e56cf;
+  --accent-hover: #7c66d9;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --border-color: #333333;
+  --success-color: #4caf50;
+  --success-hover: #45a049;
+  --info-color: #2196f3;
+  --info-hover: #0b7dda;
+}
+
+/* Global styles */
+body {
+  margin: 0;
+  background-color: var(--primary-dark);
+  color: var(--text-primary);
+  font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Responsive base font size */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 .App {
   text-align: center;
+  width: 90%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.25rem;
+  background-color: var(--secondary-dark);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .App-header {
-  background-color: #282c34;
-  padding: 20px;
+  background-color: var(--accent-color);
+  padding: 1.25rem;
   color: white;
-  margin-bottom: 20px;
-  border-radius: 5px;
+  margin-bottom: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+.App-header h1 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+}
+
+/* Futuristic button design - with responsive sizing */
 button {
-  padding: 10px 15px;
-  margin: 5px;
+  padding: 0.625rem 1.125rem;
+  margin: 0.3125rem;
   border: none;
-  border-radius: 4px;
-  background-color: #4caf50;
+  border-radius: 6px;
+  background-color: var(--accent-color);
   color: white;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  min-height: 2.75rem;
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 button:disabled {
-  background-color: #cccccc;
+  background-color: #444444;
+  color: #777777;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .button-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Responsive button layout for small screens */
+@media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button,
+  .file-label {
+    margin: 0.25rem 0;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
 }
 
 .notes-area {
-  width: 100%;
-  height: 300px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-top: 20px;
-  font-family: Arial, sans-serif;
+  width: 95%;
+  height: 400px;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-top: 1.25rem;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
   resize: vertical;
+  background-color: var(--secondary-dark);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust height for smaller screens */
+@media (max-width: 768px) {
+  .notes-area,
+  .markdown-content {
+    height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notes-area,
+  .markdown-content {
+    height: 300px;
+  }
 }
 
 .timer {
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-family: monospace;
+  padding: 0.625rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-family: "JetBrains Mono", monospace;
   font-size: 1.2em;
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
 }
 
 .file-input {
@@ -62,70 +174,103 @@ button:disabled {
 }
 
 .file-label {
-  padding: 10px 15px;
-  margin: 5px;
+  /* Make identical to button styling */
+  padding: 0.625rem 1.125rem;
+  margin: 0.3125rem;
   border: none;
-  border-radius: 4px;
-  background-color: #2196f3;
+  border-radius: 6px;
+  background-color: var(--accent-color); /* Changed to match other buttons */
   color: white;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex; /* Changed to inline-flex for better alignment */
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  text-transform: uppercase;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  min-height: 2.75rem; /* Match button height */
+  flex: 1 1 auto; /* Allow to flex like other buttons */
+  text-align: center;
 }
 
 .file-label:hover {
-  background-color: #0b7dda;
+  background-color: var(--accent-hover); /* Changed to match button hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Enhanced Markdown styling */
+.file-label:active {
+  transform: translateY(0);
+}
+
+/* Enhanced Markdown styling with improved contrast */
 .markdown-content {
   text-align: left;
-  padding: 20px;
-  border: 1px solid #e1e4e8;
-  border-radius: 6px;
-  background-color: #ffffff;
-  margin-bottom: 20px;
+  padding: 1.5625rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background-color: rgba(
+    30,
+    30,
+    30,
+    0.95
+  ); /* Slightly darker for better contrast */
+  margin-bottom: 1.25rem;
   max-height: 600px;
   overflow-y: auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-    sans-serif;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
   line-height: 1.6;
-  color: #24292e;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  color: #e0e0e0; /* Default text color - brighter for better contrast */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Typography improvements */
+/* Typography improvements with responsive sizing */
 .markdown-content h1 {
-  font-size: 2em;
-  border-bottom: 1px solid #eaecef;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.3em;
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 .markdown-content h2 {
-  font-size: 1.6em;
-  border-bottom: 1px solid #eaecef;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.3em;
-  margin-top: 24px;
-  margin-bottom: 16px;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+  font-weight: 500;
 }
 
 .markdown-content h3 {
-  font-size: 1.3em;
-  margin-top: 24px;
-  margin-bottom: 16px;
+  font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .markdown-content h4 {
-  font-size: 1.1em;
-  margin-top: 24px;
-  margin-bottom: 16px;
+  font-size: clamp(1rem, 3vw, 1.1rem);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
 }
 
-/* Paragraphs and spacing */
+/* Paragraphs and spacing - improved contrast */
 .markdown-content p {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
+  color: #e0e0e0; /* Brighter text for better contrast */
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
 /* Lists */
@@ -133,183 +278,319 @@ button:disabled {
 .markdown-content ol {
   padding-left: 2em;
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
+  color: var (--text-secondary);
 }
 
 .markdown-content li {
-  margin-bottom: 4px;
+  margin-bottom: 0.375rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
 .markdown-content li > p {
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
-/* Blockquotes */
+/* Blockquotes - improved visibility */
 .markdown-content blockquote {
   padding: 0 1em;
-  color: #6a737d;
-  border-left: 0.25em solid #dfe2e5;
-  margin: 0 0 16px 0;
+  color: #e0e0e0; /* Brighter text for better contrast */
+  border-left: 0.25em solid var(--accent-color);
+  margin: 0 0 1rem 0;
+  background-color: rgba(110, 86, 207, 0.1);
+  border-radius: 0 4px 4px 0;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
 /* Code blocks */
 .markdown-content pre {
-  background-color: #f6f8fa;
+  background-color: rgba(0, 0, 0, 0.3);
   border-radius: 6px;
-  padding: 16px;
-  overflow: auto;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
     monospace;
-  font-size: 85%;
+  font-size: clamp(0.7rem, 2.3vw, 0.85rem);
   line-height: 1.45;
-  margin-bottom: 16px;
-  border: 1px solid #e1e4e8;
-  box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
 }
 
 .markdown-content code {
-  background-color: rgba(27, 31, 35, 0.05);
+  background-color: rgba(0, 0, 0, 0.3);
   padding: 0.2em 0.4em;
   border-radius: 3px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
     monospace;
-  font-size: 85%;
+  font-size: clamp(0.7rem, 2.3vw, 0.85rem);
+  color: #e0e0e0;
 }
 
-/* Tables */
+/* Tables - make them responsive */
 .markdown-content table {
   border-collapse: collapse;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
+  display: block;
+  overflow-x: auto;
 }
 
 .markdown-content table th,
 .markdown-content table td {
-  border: 1px solid #dfe2e5;
-  padding: 6px 13px;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 0.8125rem;
 }
 
 .markdown-content table tr {
-  background-color: #ffffff;
-  border-top: 1px solid #c6cbd1;
+  background-color: var(--secondary-dark);
 }
 
 .markdown-content table tr:nth-child(2n) {
-  background-color: #f6f8fa;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 /* Horizontal rule */
 .markdown-content hr {
   height: 0.25em;
   padding: 0;
-  margin: 24px 0;
-  background-color: #e1e4e8;
+  margin: 1.5rem 0;
+  background-color: var(--border-color);
   border: 0;
 }
 
 /* Images */
 .markdown-content img {
   max-width: 100%;
+  height: auto;
   box-sizing: border-box;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
+  border-radius: 4px;
 }
 
+/* Raw markdown */
 .raw-markdown {
   width: 100%;
   height: 300px;
-  margin-top: 20px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
-    monospace;
-  padding: 12px;
-  font-size: 14px;
+  margin-top: 1.25rem;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  padding: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.5;
-  border: 1px solid #dfe2e5;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background-color: #f6f8fa;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--text-secondary);
+  resize: vertical;
+}
+
+@media (max-width: 480px) {
+  .raw-markdown {
+    height: 200px;
+    font-size: 0.75rem;
+  }
 }
 
 /* Details/summary component */
 details {
-  margin-top: 20px;
-  border: 1px solid #dfe2e5;
-  padding: 15px;
-  border-radius: 6px;
-  background-color: #f8f9fa;
+  margin-top: 1.25rem;
+  border: 1px solid var(--border-color);
+  padding: 0.9375rem;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 details summary {
   cursor: pointer;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem;
   user-select: none;
+  color: var(--accent-color);
+  padding: 0.5rem 0; /* Increase tap target size for mobile */
 }
 
 details summary:hover {
-  color: #0366d6;
+  color: var(--accent-hover);
 }
 
-/* Empty state styling */
-.empty-state {
-  text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
+/* Touch-friendly element spacing for mobile */
+@media (max-width: 768px) {
+  button,
+  .file-label,
+  details summary {
+    /* Make touch targets bigger for mobile */
+    min-height: 44px;
+    line-height: 1.2;
+  }
+
+  /* Add more space between interactive elements */
+  .markdown-content li {
+    margin-bottom: 0.75rem;
+  }
 }
 
-.empty-state h1 {
-  margin-top: 10px;
-  color: #0366d6;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.empty-state blockquote {
-  background-color: #f1f8ff !important;
-  border-left: 4px solid #0366d6 !important;
-  padding: 15px !important;
-  margin: 20px 0 !important;
-  border-radius: 0 6px 6px 0;
+::-webkit-scrollbar-track {
+  background: var(--secondary-dark);
 }
 
-.empty-state img {
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Sound wave visualization styling - fixed */
+.sound-wave {
+  margin: 0.9375rem 0;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Override any problematic ReactMic inline styles */
+.sound-wave > div {
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Ensure canvas displays properly */
+.sound-wave canvas {
+  width: 100% !important;
+  height: 100px !important; /* Fixed height matches component prop */
+  border-radius: 8px !important;
+  display: block !important;
+}
+
+/* Sound wave placeholder remains the same */
+.sound-wave-placeholder {
+  padding: 1.25rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 0.9375rem 0;
+  color: var(--text-secondary);
+  border: 1px dashed var(--border-color);
+}
+
+/* Processing indicator */
+.processing-indicator {
+  margin-top: 0.625rem;
+  color: var(--accent-color);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.processing-indicator:after {
+  content: " .";
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: " .";
+  }
+  40% {
+    content: " ..";
+  }
+  60% {
+    content: " ...";
+  }
+  80%,
+  100% {
+    content: "";
+  }
+}
+
+/* Interim transcript styling */
+.interim-transcript {
+  padding: 0.625rem;
+  margin: 0.625rem 0;
+  border-radius: 6px;
+  background-color: rgba(110, 86, 207, 0.1);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.recorded-transcript {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  max-height: 60px;
+  overflow-y: auto;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Notes display title */
+.notes-display h3 {
+  color: var(--accent-color);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.9375rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+}
+
+/* Fix buttons and inputs on iOS */
+@supports (-webkit-touch-callout: none) {
+  button,
+  .file-label,
+  input,
+  textarea {
+    /* Fix iOS text size adjust */
+    font-size: 16px;
+  }
+}
+
+/* Orientation changes */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .App {
+    padding: 0.75rem;
+  }
+
+  .App-header {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-content {
+    max-height: 300px;
+  }
+}
+
+/* Audio Visualizer styling */
+.sound-wave-container {
+  width: 100%;
+  margin: 0.9375rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.visualizer-canvas {
   display: block;
-  margin: 30px auto;
-  opacity: 0.8;
-  transition: opacity 0.3s;
+  width: 100%;
+  height: 100px;
+  background-color: #121212;
+  border-radius: 8px;
 }
 
-.empty-state img:hover {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Improve list appearance */
-.markdown-content ul {
-  list-style-type: disc;
-}
-
-.markdown-content ol {
-  list-style-type: decimal;
-}
-
-.markdown-content li::marker {
-  color: #0366d6;
-}
-
-/* Improve link appearance */
-.markdown-content a {
-  color: #0366d6;
-  text-decoration: none;
-  border-bottom: 1px dotted #0366d6;
-  transition: border-bottom 0.2s;
-}
-
-.markdown-content a:hover {
-  border-bottom: 1px solid #0366d6;
+/* Debug info display */
+.debug-info {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.85rem;
+  padding: 5px;
+  margin: 5px 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: #aaa;
 }

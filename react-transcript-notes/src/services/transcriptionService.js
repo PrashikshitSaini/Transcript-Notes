@@ -2,13 +2,11 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api";
 
-// Use the free Web Speech API for transcription or server-side Vosk for uploaded files
 export const transcribeAudio = async (audioFile) => {
   if (!audioFile || !(audioFile instanceof File)) {
     throw new Error("A valid audio file is required");
   }
 
-  // For actual voice recording (when using the mic), we'll use Web Speech API
   if (audioFile.name === "recording.wav") {
     return (
       window.recordedTranscript ||
@@ -17,32 +15,25 @@ export const transcribeAudio = async (audioFile) => {
   }
 
   try {
-    // For uploaded audio files, send to server for processing with Vosk
     const formData = new FormData();
     formData.append("audio", audioFile);
 
     console.log("Sending audio file to server for Vosk transcription...");
 
-    // Server-side transcription with Vosk
     const response = await axios.post(`${API_URL}/upload-audio`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-      // Increase timeout for larger files
-      timeout: 120000, // 2 minutes timeout for large files
+      timeout: 120000,
     });
 
-    // If server responds with a transcript
     if (response.data && response.data.transcript) {
       console.log("Transcription received from server");
       return response.data.transcript;
     }
-
     throw new Error("No transcript returned from server");
   } catch (error) {
     console.error("Error transcribing audio:", error);
-
-    // Return a more helpful error message
     if (error.code === "ECONNABORTED") {
       throw new Error(
         "Transcription timed out. The file may be too large or the server is busy."
@@ -63,13 +54,10 @@ export const transcribeAudio = async (audioFile) => {
   }
 };
 
-// This function is called by the RecordingControls component when live recording happens
 export const setupLiveTranscription = () => {
   window.recordedTranscript = "";
-
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
-
   if (!SpeechRecognition) {
     return {
       supported: false,
@@ -77,26 +65,51 @@ export const setupLiveTranscription = () => {
     };
   }
 
+  // Create a new instance each time to avoid any state issues
   const recognition = new SpeechRecognition();
+
+  // Configure recognition settings
   recognition.continuous = true;
   recognition.interimResults = true;
+  recognition.lang = "en-US";
+  recognition.maxAlternatives = 1;
+
+  // Required for Chrome - increase recognition time
+  recognition.interimResults = true;
+
+  recognition.onerror = (event) => {
+    console.error("Speech Recognition Error:", event.error);
+  };
+
+  recognition.onstart = () => {
+    console.log("Speech recognition started - listening for speech");
+  };
 
   recognition.onresult = (event) => {
+    console.log("Speech recognition result received");
+
+    // Simple, robust implementation
     let interimTranscript = "";
     let finalTranscript = window.recordedTranscript || "";
 
+    // Process all results from the current recognition session
     for (let i = event.resultIndex; i < event.results.length; i++) {
-      const transcript = event.results[i][0].transcript;
-      if (event.results[i].isFinal) {
+      const result = event.results[i];
+      const transcript = result[0].transcript;
+
+      if (result.isFinal) {
+        console.log("Final transcript:", transcript);
         finalTranscript += transcript + " ";
       } else {
-        interimTranscript += transcript;
+        console.log("Interim transcript:", transcript);
+        interimTranscript = transcript;
       }
     }
 
+    // Always update the global variable
     window.recordedTranscript = finalTranscript;
 
-    // You can display interim results if wanted
+    // Update the UI
     if (window.onInterimTranscript) {
       window.onInterimTranscript(interimTranscript);
     }
