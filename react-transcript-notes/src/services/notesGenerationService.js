@@ -40,86 +40,51 @@ export const generateNotes = async (transcript) => {
     }
     throw new Error("Invalid response from notes generation server");
   } catch (serverError) {
-    console.error(
-      "Server error, falling back to direct API call:",
-      serverError
-    );
+    console.error("Server error, using DeepSeek API directly:", serverError);
+
     // Check if DeepSeek API key is provided
     const deepseekApiKey = process.env.REACT_APP_DEEPSEEK_API_KEY;
-    if (deepseekApiKey) {
-      try {
-        const deepseekResponse = await axios.post(
-          "https://api.deepseek.com/v1/chat/completions",
-          {
-            model: "deepseek-chat",
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are a skilled note taker who creates visually engaging and well-formatted markdown notes without adding any extra content.",
-              },
-              {
-                role: "user",
-                content: enhancedPrompt + transcript,
-              },
-            ],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${deepseekApiKey}`,
-              "Content-Type": "application/json",
+    if (!deepseekApiKey) {
+      return "ERROR: DeepSeek API key is not configured. Please set REACT_APP_DEEPSEEK_API_KEY in your environment variables.";
+    }
+
+    try {
+      const deepseekResponse = await axios.post(
+        "https://api.deepseek.com/v1/chat/completions",
+        {
+          model: "deepseek-chat",
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a skilled note taker who creates visually engaging and well-formatted markdown notes without adding any extra content.",
             },
-          }
-        );
+            {
+              role: "user",
+              content: enhancedPrompt + transcript,
+            },
+          ],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${deepseekApiKey}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-        if (deepseekResponse.data?.choices?.[0]?.message?.content) {
-          return deepseekResponse.data.choices[0].message.content;
-        }
-        return "Could not generate notes via DeepSeek. The API response format was unexpected.";
-      } catch (deepseekError) {
-        console.error("Error using DeepSeek API:", deepseekError);
-        return (
-          "Error generating notes via DeepSeek: " +
-          (deepseekError.response?.data?.error?.message ||
-            deepseekError.message) +
-          "\n\nPlease check your API key and internet connection."
-        );
+      if (deepseekResponse.data?.choices?.[0]?.message?.content) {
+        return deepseekResponse.data.choices[0].message.content;
       }
-    } else {
-      // Fallback to Gemini with enhanced prompt
-      try {
-        const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-        if (!apiKey) {
-          return "ERROR: No API key is set in environment variables.";
-        }
-        const directResponse = await axios.post(
-          `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-          {
-            contents: [
-              {
-                parts: [
-                  {
-                    text: enhancedPrompt + transcript,
-                  },
-                ],
-              },
-            ],
-          }
-        );
-
-        if (directResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-          return directResponse.data.candidates[0].content.parts[0].text;
-        } else {
-          return "Could not generate notes. The API response format was unexpected.";
-        }
-      } catch (error) {
-        console.error("Error generating notes:", error);
-        return (
-          "Error generating notes: " +
-          (error.response?.data?.error?.message || error.message) +
-          "\n\nPlease check your API key and internet connection."
-        );
-      }
+      return "Could not generate notes via DeepSeek. The API response format was unexpected.";
+    } catch (deepseekError) {
+      console.error("Error using DeepSeek API:", deepseekError);
+      return (
+        "Error generating notes via DeepSeek: " +
+        (deepseekError.response?.data?.error?.message ||
+          deepseekError.message) +
+        "\n\nPlease check your DeepSeek API key and internet connection."
+      );
     }
   }
 };

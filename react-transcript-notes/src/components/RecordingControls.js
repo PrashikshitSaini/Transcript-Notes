@@ -332,7 +332,7 @@ const RecordingControls = ({
     }
   };
 
-  // Improved: Handle short (10-second) recording
+  // Modified: Handle standard recording without auto-stop
   const handleShortRecording = async () => {
     if (isRecording) return;
 
@@ -350,24 +350,11 @@ const RecordingControls = ({
       window.shouldRestartRecognition = true;
       mediaRecorderRef.current.start();
 
-      console.log("Started short (10-second) recording");
+      console.log(
+        "Started continuous recording - will continue until manually stopped"
+      );
 
-      // Stop after 10 seconds
-      setTimeout(() => {
-        if (
-          mediaRecorderRef.current &&
-          mediaRecorderRef.current.state !== "inactive"
-        ) {
-          window.shouldRestartRecognition = false;
-          onStopRecording();
-          mediaRecorderRef.current.stop();
-
-          // Cleanup stream
-          if (mediaStreamRef.current) {
-            mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-          }
-        }
-      }, 10000);
+      // No automatic stop - recording will continue until user clicks Pause or Stop
     } catch (error) {
       console.error("Failed to start recording:", error);
       setRecognitionStatus(`Start failed: ${error.message}`);
@@ -517,7 +504,7 @@ const RecordingControls = ({
           onClick={handleShortRecording}
           disabled={isRecording || isProcessing || !isMicSupported}
         >
-          Record from Mic
+          Start Recording
         </button>
         <button
           onClick={handleLongRecording}

@@ -154,9 +154,25 @@ app.post("/api/generate-notes", async (req, res) => {
       const path = require("path");
       const pyScript = path.join(__dirname, "deepseek_notes.py");
 
+      // Enhanced prompt for the Python script
+      const enhancedTranscript = `Create visually engaging, well-structured notes from this transcript:
+
+${transcript}
+
+Use varied Markdown formatting:
+- Create a prominent main title with # and subtitles with ## and ###
+- Use *italic* for emphasis and definitions
+- Highlight key terms with **bold**
+- Create bullet lists with - for main points
+- Use numbered lists (1., 2.) for sequential information or steps
+- Create > blockquotes for important quotes or statements
+- Use dividers (---) to separate major sections
+- Include code blocks for technical content if relevant
+- Use tables for comparing information when appropriate`;
+
       // FIX: Properly pass environment variables to the Python process
       console.log("Spawning DeepSeek Python process with API key...");
-      const pyProcess = spawn("python", [pyScript, transcript], {
+      const pyProcess = spawn("python", [pyScript, enhancedTranscript], {
         env: {
           ...process.env,
           // Explicitly pass the DeepSeek API key to the child process
@@ -201,7 +217,7 @@ app.post("/api/generate-notes", async (req, res) => {
 
     console.log("Generating notes with Gemini API...");
 
-    // Generate notes with Gemini API
+    // Generate notes with Gemini API - Enhanced prompt
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -209,16 +225,27 @@ app.post("/api/generate-notes", async (req, res) => {
           {
             parts: [
               {
-                text: `Generate comprehensive, well-organized notes from this transcript. 
-                Format the response in proper Markdown syntax with:
-                - Headers and subheaders (# and ##) for main topics and subtopics
-                - Bullet points (- or *) for lists
-                - **Bold** for important terms or concepts
-                - *Italics* for emphasis
-                - > Blockquotes for significant quotes or statements
-                - Proper spacing between sections
-                
-                Here is the transcript: ${transcript}`,
+                text: `Create visually engaging, well-structured notes from this transcript.
+
+Use varied Markdown formatting:
+- Create a prominent main title with # and subtitles with ## and ###
+- Use *italic* for emphasis and definitions
+- Highlight key terms with **bold**
+- Create bullet lists with - for main points
+- Use numbered lists (1., 2.) for sequential information or steps
+- Create > blockquotes for important quotes or statements
+- Use dividers (---) to separate major sections
+- Include code blocks with \`\`\` for technical content if relevant
+- Use tables for comparing information when appropriate
+
+Be sure to:
+- Vary the formatting throughout (don't just use bullets for everything)
+- Create a logical structure with clear sections
+- Highlight 3-5 key concepts with bold text 
+- Use blockquotes for direct quotes from the transcript
+- Keep the notes concise but comprehensive
+
+Here is the transcript: ${transcript}`,
               },
             ],
           },
