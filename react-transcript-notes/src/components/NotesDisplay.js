@@ -121,12 +121,12 @@ const NotesDisplay = ({ notes }) => {
             remarkPlugins={[remarkGfm]}
             children={editableNotes || notes}
             components={{
-              // Enhanced heading styling
+              // Enhanced heading styling - monochrome version
               h1: ({ node, ...props }) => (
                 <h1
                   style={{
-                    color: "#0366d6",
-                    borderBottom: "2px solid #0366d6",
+                    color: "#f0f0f0",
+                    borderBottom: "1px solid #444444",
                     paddingBottom: "8px",
                     marginBottom: "20px",
                   }}
@@ -136,8 +136,8 @@ const NotesDisplay = ({ notes }) => {
               h2: ({ node, ...props }) => (
                 <h2
                   style={{
-                    color: "#2188ff",
-                    borderBottom: "1px solid #e1e4e8",
+                    color: "#e0e0e0",
+                    borderBottom: "1px solid #333333",
                     paddingBottom: "6px",
                   }}
                   {...props}
@@ -146,7 +146,7 @@ const NotesDisplay = ({ notes }) => {
               h3: ({ node, ...props }) => (
                 <h3
                   style={{
-                    color: "#0366d6",
+                    color: "#d0d0d0",
                     fontWeight: "600",
                   }}
                   {...props}
@@ -176,22 +176,22 @@ const NotesDisplay = ({ notes }) => {
                   style={{
                     marginBottom: "8px",
                     lineHeight: "1.6",
-                    color: "#e0e0e0", // Improved contrast for list items
+                    color: "#e0e0e0", // Light gray for text
                   }}
                   {...props}
                 >
                   {children}
                 </li>
               ),
-              // Enhanced blockquote
+              // Enhanced blockquote - monochrome
               blockquote: ({ node, ...props }) => (
                 <blockquote
                   style={{
-                    borderLeft: "4px solid #0366d6",
+                    borderLeft: "3px solid #666666",
                     paddingLeft: "16px",
-                    color: "#e0e0e0", // Improved contrast for blockquotes
+                    color: "#cccccc", // Light gray for quotes
                     fontStyle: "italic",
-                    backgroundColor: "rgba(3, 102, 214, 0.1)",
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
                     padding: "10px 15px",
                     borderRadius: "0 4px 4px 0",
                   }}
@@ -203,18 +203,18 @@ const NotesDisplay = ({ notes }) => {
                 <em
                   style={{
                     fontStyle: "italic",
-                    color: "#e0e0e0", // Improved contrast for italic text
+                    color: "#d0d0d0", // Light gray for italic text
                   }}
                   {...props}
                 />
               ),
-              // Bold styling
+              // Bold styling - monochrome
               strong: ({ node, ...props }) => (
                 <strong
                   style={{
                     fontWeight: "bold",
-                    color: "#ffffff", // Improved contrast for bold text
-                    backgroundColor: "rgba(110, 86, 207, 0.2)",
+                    color: "#ffffff", // White for bold text
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
                     padding: "2px 4px",
                     borderRadius: "3px",
                   }}
@@ -225,27 +225,27 @@ const NotesDisplay = ({ notes }) => {
               a: ({ node, ...props }) => (
                 <a
                   style={{
-                    color: "#58a6ff", // Brighter blue for better visibility
+                    color: "#cccccc", // Light gray for links
                     textDecoration: "none",
-                    borderBottom: "1px dotted #58a6ff",
+                    borderBottom: "1px dotted #888888",
                   }}
                   target="_blank"
                   rel="noopener noreferrer"
                   {...props}
                 />
               ),
-              // Enhanced code styling
+              // Enhanced code styling - monochrome
               code: ({ inline, ...props }) =>
                 inline ? (
                   <code
                     style={{
-                      backgroundColor: "rgba(110, 86, 207, 0.2)",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
                       padding: "2px 4px",
                       borderRadius: "3px",
                       fontSize: "85%",
-                      color: "#e0e0e0", // Improved contrast for inline code
+                      color: "#e0e0e0", // Light gray for inline code
                       fontFamily:
-                        "SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace",
+                        "JetBrains Mono, SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace",
                     }}
                     {...props}
                   />
@@ -256,8 +256,8 @@ const NotesDisplay = ({ notes }) => {
                       padding: "16px",
                       overflow: "auto",
                       fontSize: "85%",
-                      backgroundColor: "rgba(0, 0, 0, 0.4)",
-                      color: "#e0e0e0", // Improved contrast for code blocks
+                      backgroundColor: "rgba(0, 0, 0, 0.2)",
+                      color: "#d0d0d0", // Light gray for code blocks
                       borderRadius: "6px",
                       border: "1px solid #333",
                     }}
@@ -268,9 +268,81 @@ const NotesDisplay = ({ notes }) => {
               p: ({ node, ...props }) => (
                 <p
                   style={{
-                    color: "#e0e0e0", // Bright text for high contrast
+                    color: "#e0e0e0", // Light gray for high contrast
                     marginBottom: "1rem",
                     lineHeight: "1.6",
+                  }}
+                  {...props}
+                />
+              ),
+              // Tables - monochrome styling
+              table: ({ node, ...props }) => (
+                <table
+                  style={{
+                    borderCollapse: "collapse",
+                    width: "100%",
+                    marginBottom: "1rem",
+                  }}
+                  {...props}
+                />
+              ),
+              th: ({ node, ...props }) => (
+                <th
+                  style={{
+                    borderBottom: "2px solid #444444",
+                    padding: "8px 12px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#f0f0f0",
+                  }}
+                  {...props}
+                />
+              ),
+              td: ({ node, ...props }) => (
+                <td
+                  style={{
+                    border: "1px solid #333333",
+                    padding: "8px 12px",
+                    color: "#d0d0d0",
+                  }}
+                  {...props}
+                />
+              ),
+              // Horizontal rule
+              hr: ({ node, ...props }) => (
+                <hr
+                  style={{
+                    border: "none",
+                    height: "1px",
+                    backgroundColor: "#444444",
+                    margin: "24px 0",
+                  }}
+                  {...props}
+                />
+              ),
+              // Image styling - grayscale
+              img: ({ node, ...props }) => (
+                <img
+                  style={{
+                    maxWidth: "100%",
+                    borderRadius: "4px",
+                    filter: "grayscale(100%)",
+                    border: "1px solid #333333",
+                  }}
+                  {...props}
+                  alt={props.alt || "Image"}
+                />
+              ),
+              // Pre block (code container)
+              pre: ({ node, ...props }) => (
+                <pre
+                  style={{
+                    backgroundColor: "rgba(0, 0, 0, 0.2)",
+                    padding: "16px",
+                    borderRadius: "4px",
+                    overflow: "auto",
+                    border: "1px solid #333333",
+                    marginBottom: "1rem",
                   }}
                   {...props}
                 />

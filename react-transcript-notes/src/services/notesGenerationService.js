@@ -57,7 +57,7 @@ export const generateNotes = async (transcript) => {
             {
               role: "system",
               content:
-                "You are a skilled note taker who creates visually engaging and well-formatted markdown notes without adding any extra content.",
+                "You are a skilled note taker who creates visually engaging and well-formatted markdown notes without adding any extra content but make sure to generate notes from every important line from the transcript. The notes should be detailed, yet with no extra content from your side.",
             },
             {
               role: "user",

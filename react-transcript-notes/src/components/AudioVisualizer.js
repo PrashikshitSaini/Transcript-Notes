@@ -126,7 +126,7 @@ const AudioVisualizer = ({ isRecording, isPaused }) => {
     // Clear the canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Draw the visualizer
+    // Draw the visualizer with monochrome colors
     ctx.fillStyle = "#121212"; // Match app's background
     ctx.fillRect(0, 0, width, height);
 
@@ -135,15 +135,15 @@ const AudioVisualizer = ({ isRecording, isPaused }) => {
     for (let i = 0; i < dataArrayRef.current.length; i++) {
       const barHeight = (dataArrayRef.current[i] / 255) * height * 0.8;
 
-      // Create a gradient for the bars
+      // Create a monochrome gradient for the bars
       const gradient = ctx.createLinearGradient(
         0,
         height,
         0,
         height - barHeight
       );
-      gradient.addColorStop(0, "#6e56cf"); // Accent color
-      gradient.addColorStop(1, "#ffffff"); // White top
+      gradient.addColorStop(0, "#444444"); // Dark gray
+      gradient.addColorStop(1, "#FFFFFF"); // White top
 
       ctx.fillStyle = gradient;
 

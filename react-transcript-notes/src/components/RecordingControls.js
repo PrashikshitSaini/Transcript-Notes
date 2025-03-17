@@ -332,8 +332,8 @@ const RecordingControls = ({
     }
   };
 
-  // Modified: Handle standard recording without auto-stop
-  const handleShortRecording = async () => {
+  // Modified: Handle standard recording with 30 minute automatic stop
+  const handleRecording = async () => {
     if (isRecording) return;
 
     try {
@@ -348,48 +348,19 @@ const RecordingControls = ({
       // Start recording
       onStartRecording();
       window.shouldRestartRecognition = true;
-      mediaRecorderRef.current.start();
+      mediaRecorderRef.current.start(60000); // Get data every minute for safety
 
       console.log(
-        "Started continuous recording - will continue until manually stopped"
+        "Started recording - will automatically stop after 30 minutes"
       );
 
-      // No automatic stop - recording will continue until user clicks Pause or Stop
-    } catch (error) {
-      console.error("Failed to start recording:", error);
-      setRecognitionStatus(`Start failed: ${error.message}`);
-      alert(
-        "Could not access microphone. Please check your browser permissions."
-      );
-    }
-  };
-
-  // Improved: Handle long (30-minute) recording
-  const handleLongRecording = async () => {
-    if (isRecording) return;
-
-    try {
-      // Clear existing transcript
-      window.recordedTranscript = "";
-      setInterimTranscript("");
-      setRecognitionStatus("Starting...");
-
-      // Set up media recorder
-      mediaRecorderRef.current = await setupMediaRecorder();
-
-      // Start recording
-      onStartRecording();
-      window.shouldRestartRecognition = true;
-      mediaRecorderRef.current.start(60000); // Get data every minute for long recordings
-
-      console.log("Started long (30-minute) recording");
-
-      // Automatically stop after 30 minutes as a safety measure
+      // Automatically stop after 30 minutes
       setTimeout(() => {
         if (
           mediaRecorderRef.current &&
           mediaRecorderRef.current.state !== "inactive"
         ) {
+          console.log("Automatically stopping recording after 30 minutes");
           window.shouldRestartRecognition = false;
           onStopRecording();
           mediaRecorderRef.current.stop();
@@ -488,6 +459,9 @@ const RecordingControls = ({
                 disabled={isRecording || isProcessing}
               />
             </label>
+            <div className="recording-info">
+              <em>Recording will automatically stop after 30 minutes</em>
+            </div>
           </>
         ) : (
           <div>
@@ -501,16 +475,10 @@ const RecordingControls = ({
       </div>
       <div className="button-group">
         <button
-          onClick={handleShortRecording}
+          onClick={handleRecording}
           disabled={isRecording || isProcessing || !isMicSupported}
         >
           Start Recording
-        </button>
-        <button
-          onClick={handleLongRecording}
-          disabled={isRecording || isProcessing || !isMicSupported}
-        >
-          Record 30 Minutes
         </button>
         <button
           onClick={onPauseRecording}
